@@ -11,7 +11,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "docx": "^8.5.0",
     "docx-to-pdf": "^1.1.0",
     "express": "^4.19.2",
     "node-telegram-bot-api": "^0.65.1",

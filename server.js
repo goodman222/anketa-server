@@ -248,7 +248,7 @@ async function patchFile(data, fileName) {
       },
     },
   }).then((doc) => {
-	  console.log('Сохранение');
+    console.log("Сохранение");
     fs.writeFileSync(fileName, doc);
   });
 }
@@ -300,16 +300,29 @@ function getRow(arr, widthArray) {
   });
 }
 
+import convertDocxToPdf from "docx-to-pdf";
 
 async function sendFile(req, res) {
-console.log('Поступил запрос');
-	const data = req.body;
-	const fileName = `./${data.personal.name.value}_${data.personal.lastName.value}.docx`;
+  console.log("Поступил запрос");
+  const data = req.body;
+  const fileName = `./${data.personal.name.value}_${data.personal.lastName.value}.docx`;
+  const fileNameClean = `./${data.personal.name.value}_${data.personal.lastName.value}.`;
 
   await patchFile(data, fileName);
 
+  const docxFilePath = `${fileNameClean}.docx`;
+  const pdfFilePath = `${fileNameClean}.pdf`;
 
-	await new Promise(async (resolve, reject) => {
+  convertDocxToPdf(docxFilePath, pdfFilePath, function (err, result) {
+    if (err) {
+      console.log("ошибка конвертации");
+      console.error(err);
+    } else {
+      console.log("Файл успешно сконвертирован!");
+    }
+  });
+
+  await new Promise(async (resolve, reject) => {
     await bd.forEach(async (chatId) => {
       await bot.sendDocument(chatId, fileName).catch((error) => reject());
       await bot
@@ -322,9 +335,12 @@ console.log('Поступил запрос');
     resolve();
   });
 
-fs.unlink(fileName, (err) => {
- if (err) throw err; // не удалось удалить файл
- });
+  fs.unlink(fileName, (err) => {
+    if (err) throw err; // не удалось удалить файл
+    else {
+      console.log("файл удален");
+    }
+  });
 }
 
 app.post("/saveFile", (req, res) => sendFile(req, res));
