@@ -30,7 +30,7 @@ app.use(express.json());
 let bd;
 
 async function readBase() {
-  fs.readFile("./back/base.json", (err, data) => {
+  fs.readFile("./base.json", (err, data) => {
     bd = JSON.parse(data);
     console.log(`Base: ${bd}`);
   });
@@ -59,7 +59,7 @@ bot.on("message", async (msg) => {
   if (text === "pass1234") {
     bd.push(chatId);
     const saveBd = JSON.stringify(bd);
-    fs.writeFile("./back/base.json", saveBd, (data) => {});
+    fs.writeFile("./base.json", saveBd, (data) => {});
     bot.sendMessage(chatId, "Пароль верный!");
   }
 });
@@ -67,7 +67,7 @@ bot.on("message", async (msg) => {
 //Создание файла----
 
 async function patchFile(data, fileName) {
-  await patchDocument(fs.readFileSync("./back/template.docx"), {
+  await patchDocument(fs.readFileSync("./template.docx"), {
     patches: {
       start_dateComlition: {
         type: PatchType.PARAGRAPH,
