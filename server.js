@@ -28,7 +28,7 @@ app.use(express.json());
 let bd;
 
 async function readBase() {
-  fs.readFile("./back/base.json", (err, data) => {
+  fs.readFile("base.json", (err, data) => {
     bd = JSON.parse(data);
     console.log(`Base: ${bd}`);
   });
@@ -57,7 +57,7 @@ bot.on("message", async (msg) => {
   if (text === "pass1234") {
     bd.push(chatId);
     const saveBd = JSON.stringify(bd);
-    fs.writeFile("./back/base.json", saveBd, (data) => {});
+    fs.writeFile("base.json", saveBd, (data) => {});
     bot.sendMessage(chatId, "Пароль верный!");
   }
 });
@@ -65,7 +65,7 @@ bot.on("message", async (msg) => {
 //Создание файла----
 
 async function patchFile(data, fileName) {
-  await patchDocument(fs.readFileSync("./back/template.docx"), {
+  await patchDocument(fs.readFileSync("template.docx"), {
     patches: {
       start_dateComlition: {
         type: PatchType.PARAGRAPH,
@@ -248,6 +248,7 @@ async function patchFile(data, fileName) {
       },
     },
   }).then((doc) => {
+	  console.log('Сохранение');
     fs.writeFileSync(fileName, doc);
   });
 }
@@ -299,13 +300,16 @@ function getRow(arr, widthArray) {
   });
 }
 
+
 async function sendFile(req, res) {
-  const data = req.body;
-  const fileName = `./back/${data.personal.name.value}_${data.personal.lastName.value}.docx`;
+console.log('Поступил запрос');
+	const data = req.body;
+	const fileName = `./${data.personal.name.value}_${data.personal.lastName.value}.docx`;
 
   await patchFile(data, fileName);
 
-  await new Promise(async (resolve, reject) => {
+
+	await new Promise(async (resolve, reject) => {
     await bd.forEach(async (chatId) => {
       await bot.sendDocument(chatId, fileName).catch((error) => reject());
       await bot
@@ -318,11 +322,11 @@ async function sendFile(req, res) {
     resolve();
   });
 
-  fs.unlink(fileName, (err) => {
-    if (err) throw err; // не удалось удалить файл
-  });
+fs.unlink(fileName, (err) => {
+ if (err) throw err; // не удалось удалить файл
+ });
 }
 
 app.post("/saveFile", (req, res) => sendFile(req, res));
 
-ViteExpress.listen(app, 5173, () => console.log("Server is listening..."));
+ViteExpress.listen(app, 3000, () => console.log("Server is listening..."));
