@@ -300,7 +300,7 @@ function getRow(arr, widthArray) {
   });
 }
 
-import converter from "office-converter";
+import unoconv from "unoconv";
 
 async function sendFile(req, res) {
   console.log("Поступил запрос");
@@ -310,11 +310,9 @@ async function sendFile(req, res) {
 
   await patchFile(data, fileName);
 
-  converter.generatePdf(fileName, function (err, result) {
-    // Process result if no error
-    if (result.status === 0) {
-      console.log("Output File located at " + result.outputFile);
-    }
+  unoconv.convert("templacte.docx", "pdf", function (err, result) {
+    // result is returned as a Buffer
+    fs.writeFile("converted.pdf", result);
   });
 
   await new Promise(async (resolve, reject) => {
