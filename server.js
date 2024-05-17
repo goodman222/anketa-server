@@ -300,7 +300,7 @@ function getRow(arr, widthArray) {
   });
 }
 
-import convertDocxToPdf from "docx-to-pdf";
+import converter from "office-converter";
 
 async function sendFile(req, res) {
   console.log("Поступил запрос");
@@ -310,15 +310,10 @@ async function sendFile(req, res) {
 
   await patchFile(data, fileName);
 
-  const docxFilePath = `${fileNameClean}.docx`;
-  const pdfFilePath = `${fileNameClean}.pdf`;
-
-  convertDocxToPdf(docxFilePath, pdfFilePath, function (err, result) {
-    if (err) {
-      console.log("ошибка конвертации");
-      console.error(err);
-    } else {
-      console.log("Файл успешно сконвертирован!");
+  converter.generatePdf(fileName, function (err, result) {
+    // Process result if no error
+    if (result.status === 0) {
+      console.log("Output File located at " + result.outputFile);
     }
   });
 
