@@ -10,6 +10,9 @@ const app = express();
 
 app.use(express.json());
 
+function sendFile(req,res) {
+console.log('We get request!!!t')
+}
 
 app.post("/saveFile", (req, res) => sendFile(req, res));
 
